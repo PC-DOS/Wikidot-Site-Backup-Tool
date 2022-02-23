@@ -1,0 +1,18 @@
+C:\Users\PC-DOS\AppData\Local\Temporary Projects\WikidotSiteBackupTool\bin\Debug\WikidotSiteBackupTool.exe.config
+D:\WikidotSiteBackupTool\WikidotSiteBackupTool\bin\Debug\WikidotSiteBackupTool.exe.config
+D:\WikidotSiteBackupTool\WikidotSiteBackupTool\obj\Debug\WikidotSiteBackupTool.vbproj.ResolveComReference.cache
+D:\WikidotSiteBackupTool\WikidotSiteBackupTool\bin\Debug\WikidotSiteBackupTool.exe
+D:\WikidotSiteBackupTool\WikidotSiteBackupTool\bin\Debug\WikidotSiteBackupTool.pdb
+D:\WikidotSiteBackupTool\WikidotSiteBackupTool\bin\Debug\WikidotSiteBackupTool.xml
+D:\WikidotSiteBackupTool\WikidotSiteBackupTool\obj\Debug\MainWindow.baml
+D:\WikidotSiteBackupTool\WikidotSiteBackupTool\obj\Debug\MainWindow.g.vb
+D:\WikidotSiteBackupTool\WikidotSiteBackupTool\obj\Debug\Application.g.vb
+D:\WikidotSiteBackupTool\WikidotSiteBackupTool\obj\Debug\WikidotSiteBackupTool_MarkupCompile.cache
+D:\WikidotSiteBackupTool\WikidotSiteBackupTool\obj\Debug\WikidotSiteBackupTool.g.resources
+D:\WikidotSiteBackupTool\WikidotSiteBackupTool\obj\Debug\WikidotSiteBackupTool.Resources.resources
+D:\WikidotSiteBackupTool\WikidotSiteBackupTool\obj\Debug\WikidotSiteBackupTool.vbproj.GenerateResource.Cache
+D:\WikidotSiteBackupTool\WikidotSiteBackupTool\obj\Debug\WikidotSiteBackupTool.exe
+D:\WikidotSiteBackupTool\WikidotSiteBackupTool\obj\Debug\WikidotSiteBackupTool.xml
+D:\WikidotSiteBackupTool\WikidotSiteBackupTool\obj\Debug\WikidotSiteBackupTool.pdb
+D:\WikidotSiteBackupTool\WikidotSiteBackupTool\bin\Debug\UseNewVersionOfWebBrowserX64.reg
+D:\WikidotSiteBackupTool\WikidotSiteBackupTool\bin\Debug\UseNewVersionOfWebBrowserX86.reg

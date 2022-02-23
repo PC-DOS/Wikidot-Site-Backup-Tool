@@ -1,0 +1,45 @@
+﻿<Window x:Class="MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Title="Wikidot Site Backup Tool" Height="350" Width="525" MinHeight="350" MinWidth="525" Icon="Icon/Icon.ico">
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.Row="0" Grid.Column="0" Text="Target Site:" VerticalAlignment="Center"/>
+            <TextBox x:Name="txtSiteUrl" Grid.Row="0" Grid.Column="1" Margin="5,0,0,0" Text="http://pc-dos.wikidot.com" VerticalAlignment="Center"/>
+            <TextBlock Grid.Row="1" Grid.Column="0" Text="Page List:" Margin="0,5,0,0" VerticalAlignment="Center"/>
+            <TextBox x:Name="txtListPageName" Grid.Row="1" Grid.Column="1" Margin="5,5,0,0" Text="system:list-all-pages" VerticalAlignment="Center"/>
+            <TextBlock Grid.Row="2" Grid.Column="0" Text="Save to:" Margin="0,5,0,0" VerticalAlignment="Center"/>
+            <Grid Grid.Row="2" Grid.Column="1" VerticalAlignment="Center">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <TextBox x:Name="txtSavePath" Grid.Column="0" Margin="5,5,0,0" Text="C:\Backup\" VerticalAlignment="Center"/>
+                <Button x:Name="btnBrowseSavePath" Grid.Column="1" Content="_Browse..." Margin="5,5,0,0"/>
+            </Grid>
+            <StackPanel Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Horizontal" Margin="0,5,0,0">
+                <Button x:Name="btnStartBackup" Grid.Row="3" Content="B_ackup"/>
+                <Button x:Name="btnLogin" Grid.Row="3" Content="_Login" Margin="5,0,0,0"/>
+            </StackPanel>
+        </Grid>
+        <WebBrowser x:Name="wbbWikidotSiteContainer" Grid.Row="1" Margin="0,10,0,0"/>
+        <ListBox x:Name="lstLog" Grid.Row="2" Margin="0,10,0,0"/>
+        <ProgressBar x:Name="prgProgress" Grid.Row="3" Minimum="0" Maximum="100" Height="10" Margin="0,10,0,0"/>
+    </Grid>
+</Window>
