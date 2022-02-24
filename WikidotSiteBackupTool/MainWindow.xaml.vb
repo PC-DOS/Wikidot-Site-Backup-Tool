@@ -65,7 +65,11 @@ Class MainWindow
             SiteUrl = txtSiteUrl.Text.Trim()
             PageListPageName = txtListPageName.Text.Trim()
             PageListPageUrl = SiteUrl & "/" & PageListPageName.Trim()
+            LockUi()
+            WebBrowserLoadingOperationWaiter.SetWaitingConditionNotSatisfied()
             wbbWikidotSiteContainer.Navigate(PageListPageUrl)
+            WebBrowserLoadingOperationWaiter.WaitForEventOrOperationFinished(240 * 1000)
+            UnlockUi()
         End If
     End Sub
 
@@ -74,7 +78,11 @@ Class MainWindow
             SiteUrl = txtSiteUrl.Text.Trim()
             PageListPageName = txtListPageName.Text.Trim()
             PageListPageUrl = SiteUrl & "/" & PageListPageName.Trim()
+            LockUi()
+            WebBrowserLoadingOperationWaiter.SetWaitingConditionNotSatisfied()
             wbbWikidotSiteContainer.Navigate(PageListPageUrl)
+            WebBrowserLoadingOperationWaiter.WaitForEventOrOperationFinished(240 * 1000)
+            UnlockUi()
         End If
     End Sub
 
@@ -93,7 +101,11 @@ Class MainWindow
     End Sub
 
     Private Sub btnLogin_Click(sender As Object, e As RoutedEventArgs) Handles btnLogin.Click
+        LockUi()
+        WebBrowserLoadingOperationWaiter.SetWaitingConditionNotSatisfied()
         wbbWikidotSiteContainer.Navigate("https://www.wikidot.com/default--flow/login__LoginPopupScreen")
+        WebBrowserLoadingOperationWaiter.WaitForEventOrOperationFinished(240 * 1000)
+        UnlockUi()
     End Sub
 
     Private Sub wbbWikidotSiteContainer_LoadCompleted(sender As Object, e As NavigationEventArgs) Handles wbbWikidotSiteContainer.LoadCompleted
@@ -121,11 +133,16 @@ Class MainWindow
         Dim RetryCounter As Integer
         For RetryCounter = 1 To 5
             WebBrowserLoadingOperationWaiter.SetWaitingConditionNotSatisfied()
-            wbbWikidotSiteContainer.Navigate(PageListPageUrl)
+            If RetryCounter = 1 Then
+                wbbWikidotSiteContainer.Navigate(PageListPageUrl)
+            Else
+                wbbWikidotSiteContainer.Refresh()
+            End If
             If WebBrowserLoadingOperationWaiter.WaitForEventOrOperationFinished(240 * 1000) Then
                 RetryCounter = 0
                 Exit For
             End If
+            DoEvents()
         Next
         If RetryCounter <> 0 Then
             WriteLog("WARNING: Failed to load page list (timed out) after 5 tries, operations may fail.")
@@ -170,11 +187,16 @@ Class MainWindow
             'Load page list page
             For RetryCounter = 1 To 5
                 WebBrowserLoadingOperationWaiter.SetWaitingConditionNotSatisfied()
-                wbbWikidotSiteContainer.Navigate(PageListPageUrl & "/p/" & i.ToString())
+                If RetryCounter = 1 Then
+                    wbbWikidotSiteContainer.Navigate(PageListPageUrl & "/p/" & i.ToString())
+                Else
+                    wbbWikidotSiteContainer.Refresh()
+                End If
                 If WebBrowserLoadingOperationWaiter.WaitForEventOrOperationFinished(240 * 1000) Then
                     RetryCounter = 0
                     Exit For
                 End If
+                DoEvents()
             Next
             If RetryCounter <> 0 Then
                 WriteLog("WARNING: Failed to load page list (timed out) after 5 tries, operations may fail.")
@@ -222,11 +244,20 @@ Class MainWindow
             'Navigate to page
             For RetryCounter = 1 To 5
                 WebBrowserLoadingOperationWaiter.SetWaitingConditionNotSatisfied()
-                wbbWikidotSiteContainer.Navigate(PageList(i).PageUrl & "/norender/true")
+                If RetryCounter = 1 Then
+                    wbbWikidotSiteContainer.Navigate(PageList(i).PageUrl & "/norender/true")
+                Else
+                    wbbWikidotSiteContainer.Refresh()
+                End If
                 If WebBrowserLoadingOperationWaiter.WaitForEventOrOperationFinished(240 * 1000) Then
+                    'Check if loaded page is valid
+                    If IsNothing(CurrentHTMLDocument.getElementById("more-options-button")) Then
+                        Continue For
+                    End If
                     RetryCounter = 0
                     Exit For
                 End If
+                DoEvents()
             Next
             If RetryCounter <> 0 Then
                 WriteLog("Failed to load page '" & PageList(i).PageFullName & "' after 5 tries, page skipped.")
@@ -260,48 +291,43 @@ Class MainWindow
                     GeneralTimoutWaiter.WaitForEventOrOperationFinished(100)
                     DoEvents()
                 Next
-                Try
-                    ViewSourceButton.click()
-                    For RetryCounter = 1 To 5
-                        GeneralTimoutWaiter.SetWaitingConditionNotSatisfied()
-                        GeneralTimoutWaiter.WaitForEventOrOperationFinished(2500)
-                        CurrentHTMLDocument = wbbWikidotSiteContainer.Document
-                        PossibleElements = CurrentHTMLDocument.getElementsByTagName("div")
-                        Dim IsPageSourceDivFound As Boolean = False
-                        For Each CurrentElement In PossibleElements
-                            If CurrentElement.className = "page-source" Then
-                                IsPageSourceDivFound = True
-                                Dim OutputFileName As String
-                                If PageList(i).IsPageCategoryNotDefault Then
-                                    OutputFileName = PageList(i).PageCategory & "_" & PageList(i).PageUnixName
-                                Else
-                                    OutputFileName = PageList(i).PageUnixName
-                                End If
-                                OutputFileName = OutputFileName.Replace(":", "_")
-                                OutputFileName = SavePath & "\source\" & OutputFileName & ".txt"
-                                Dim OutputStream As FileStream = File.Open(OutputFileName, FileMode.Create, FileAccess.Write)
-                                Dim DataArray() As Byte = Encoding.UTF8.GetBytes(CurrentElement.innerText)
-                                OutputStream.Write(DataArray, 0, DataArray.Length)
-                                OutputStream.Flush()
-                                OutputStream.Close()
-                                Exit For
+                ViewSourceButton.click()
+                For RetryCounter = 1 To 5
+                    GeneralTimoutWaiter.SetWaitingConditionNotSatisfied()
+                    GeneralTimoutWaiter.WaitForEventOrOperationFinished(2500)
+                    CurrentHTMLDocument = wbbWikidotSiteContainer.Document
+                    PossibleElements = CurrentHTMLDocument.getElementsByTagName("div")
+                    Dim IsPageSourceDivFound As Boolean = False
+                    For Each CurrentElement In PossibleElements
+                        If CurrentElement.className = "page-source" Then
+                            IsPageSourceDivFound = True
+                            Dim OutputFileName As String
+                            If PageList(i).IsPageCategoryNotDefault Then
+                                OutputFileName = PageList(i).PageCategory & "_" & PageList(i).PageUnixName
+                            Else
+                                OutputFileName = PageList(i).PageUnixName
                             End If
-                        Next
-                        If IsPageSourceDivFound Then
-                            RetryCounter = 0
+                            OutputFileName = OutputFileName.Replace(":", "_")
+                            OutputFileName = SavePath & "\source\" & OutputFileName & ".txt"
+                            Dim OutputStream As FileStream = File.Open(OutputFileName, FileMode.Create, FileAccess.Write)
+                            Dim DataArray() As Byte = Encoding.UTF8.GetBytes(CurrentElement.innerText)
+                            OutputStream.Write(DataArray, 0, DataArray.Length)
+                            OutputStream.Flush()
+                            OutputStream.Close()
                             Exit For
                         End If
                     Next
-                    If RetryCounter <> 0 Then
-                        WriteLog("Failed to save page source of page '" & PageList(i).PageFullName & "' after 5 tries, page skipped.")
-                        FailedCount += 1
-                        Continue For
+                    If IsPageSourceDivFound Then
+                        RetryCounter = 0
+                        Exit For
                     End If
-                Catch ex As Exception
-                    WriteLog("Failed to save page source of page '" & PageList(i).PageFullName & "', page skipped.")
+                    DoEvents()
+                Next
+                If RetryCounter <> 0 Then
+                    WriteLog("Failed to save page source of page '" & PageList(i).PageFullName & "' after 5 tries, page skipped.")
                     FailedCount += 1
                     Continue For
-                End Try
+                End If
             Catch ex As Exception
                 WriteLog("Failed to save page source of page '" & PageList(i).PageFullName & "', page skipped.")
                 FailedCount += 1
