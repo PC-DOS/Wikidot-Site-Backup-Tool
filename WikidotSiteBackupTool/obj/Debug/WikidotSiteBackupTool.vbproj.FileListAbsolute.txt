@@ -33,3 +33,5 @@ E:\Git\Wikidot-Site-Backup-Tool\WikidotSiteBackupTool\obj\Debug\WikidotSiteBacku
 E:\Git\Wikidot-Site-Backup-Tool\WikidotSiteBackupTool\obj\Debug\WikidotSiteBackupTool.exe
 E:\Git\Wikidot-Site-Backup-Tool\WikidotSiteBackupTool\obj\Debug\WikidotSiteBackupTool.xml
 E:\Git\Wikidot-Site-Backup-Tool\WikidotSiteBackupTool\obj\Debug\WikidotSiteBackupTool.pdb
+E:\Git\Wikidot-Site-Backup-Tool\WikidotSiteBackupTool\bin\Debug\UseNewVersionOfWebBrowserX64_IE10.reg
+E:\Git\Wikidot-Site-Backup-Tool\WikidotSiteBackupTool\bin\Debug\UseNewVersionOfWebBrowserX86_IE10.reg

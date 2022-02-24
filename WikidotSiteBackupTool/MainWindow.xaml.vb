@@ -24,6 +24,7 @@ Class MainWindow
     Private Sub WriteLog(LogMessage As String)
         LogList.Add(LogMessage)
         RefreshLogList()
+        DoEvents()
     End Sub
     Private Sub ClearLog()
         LogList.Clear()
