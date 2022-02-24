@@ -204,23 +204,26 @@ Class MainWindow
             End If
             'Enumerate links to pages
             CurrentHTMLDocument = wbbWikidotSiteContainer.Document
-            PossibleElements = CurrentHTMLDocument.getElementsByTagName("div")
-            Dim IsListPagesBoxFound As Boolean = False
-            For Each CurrentElement In PossibleElements
-                If CurrentElement.className = "list-pages-box" Then
-                    IsListPagesBoxFound = True
-                    Exit For
-                End If
-            Next
-            If IsListPagesBoxFound Then
-                ChildrenCollection = CurrentElement.all
-                For Each CurrentElement In ChildrenCollection
-                    'Find a link
-                    If CurrentElement.tagName.ToUpper = "A" And CurrentElement.parentElement.tagName.ToUpper = "P" Then
-                        Dim LinkElement As IHTMLAnchorElement = CurrentElement
-                        PageList.Add(New WikidotPage(LinkElement.href))
+            Dim PageContentDiv As IHTMLElement = CurrentHTMLDocument.getElementById("page-content")
+            If Not IsNothing(PageContentDiv) Then
+                PossibleElements = PageContentDiv.all
+                Dim IsListPagesBoxFound As Boolean = False
+                For Each CurrentElement In PossibleElements
+                    If CurrentElement.className = "list-pages-box" Then
+                        IsListPagesBoxFound = True
+                        Exit For
                     End If
                 Next
+                If IsListPagesBoxFound Then
+                    ChildrenCollection = CurrentElement.all
+                    For Each CurrentElement In ChildrenCollection
+                        'Find a link
+                        If CurrentElement.tagName.ToUpper = "A" And CurrentElement.parentElement.tagName.ToUpper = "P" Then
+                            Dim LinkElement As IHTMLAnchorElement = CurrentElement
+                            PageList.Add(New WikidotPage(LinkElement.href))
+                        End If
+                    Next
+                End If
             End If
         Next
         WriteLog(PageList.Count.ToString & " page(s) found.")
@@ -252,6 +255,7 @@ Class MainWindow
                 End If
                 If WebBrowserLoadingOperationWaiter.WaitForEventOrOperationFinished(240 * 1000) Then
                     'Check if loaded page is valid
+                    CurrentHTMLDocument = wbbWikidotSiteContainer.Document
                     If IsNothing(CurrentHTMLDocument.getElementById("more-options-button")) Then
                         Continue For
                     End If
@@ -281,9 +285,9 @@ Class MainWindow
                 MoreOptionsButton.click()
                 GeneralTimoutWaiter.SetWaitingConditionNotSatisfied()
                 GeneralTimoutWaiter.WaitForEventOrOperationFinished(1000)
-                CurrentHTMLDocument = wbbWikidotSiteContainer.Document
                 Dim ViewSourceButton As IHTMLElement = Nothing
                 For RetryCounter = 1 To 5
+                    CurrentHTMLDocument = wbbWikidotSiteContainer.Document
                     ViewSourceButton = CurrentHTMLDocument.getElementById("view-source-button")
                     If Not IsNothing(ViewSourceButton) Then
                         Exit For
