@@ -6,7 +6,15 @@ WikidotSiteBackupTool
 </name>
 </assembly>
 <members>
-<member name="M:WikidotSiteBackupTool.Application.InitializeComponent">
+<member name="M:WikidotSiteBackupTool.MainWindow.InitializeComponent">
+	<summary>
+InitializeComponent
+</summary>
+</member><member name="T:WikidotSiteBackupTool.MainWindow">
+	<summary>
+MainWindow
+</summary>
+</member><member name="M:WikidotSiteBackupTool.Application.InitializeComponent">
 	<summary>
 InitializeComponent
 </summary>
@@ -18,14 +26,51 @@ Application Entry Point.
 	<summary>
 Application
 </summary>
-</member><member name="M:WikidotSiteBackupTool.MainWindow.InitializeComponent">
+</member><member name="T:WikidotSiteBackupTool.WikidotSiteHttpProtocol">
 	<summary>
-InitializeComponent
-</summary>
-</member><member name="T:WikidotSiteBackupTool.MainWindow">
+ Protocol type of a URL
+ </summary>
+	<remarks></remarks>
+</member><member name="F:WikidotSiteBackupTool.WikidotPage.PageUrl">
 	<summary>
-MainWindow
-</summary>
+ Full URL of the page, looks like "http(s)://site.name/(category:)page-name(/../...)".
+ </summary>
+	<remarks></remarks>
+</member><member name="F:WikidotSiteBackupTool.WikidotPage.IsPageUrlValid">
+	<summary>
+ Marks if the URL is valid.
+ </summary>
+	<remarks></remarks>
+</member><member name="F:WikidotSiteBackupTool.WikidotPage.PageSite">
+	<summary>
+ Belonging site of this page.
+ </summary>
+	<remarks></remarks>
+</member><member name="F:WikidotSiteBackupTool.WikidotPage.PageFullName">
+	<summary>
+ Full name of this page, looks like "(category:)page-name".
+ </summary>
+	<remarks></remarks>
+</member><member name="F:WikidotSiteBackupTool.WikidotPage.PageUnixName">
+	<summary>
+ Unix name of the page.
+ </summary>
+	<remarks></remarks>
+</member><member name="F:WikidotSiteBackupTool.WikidotPage.PageCategory">
+	<summary>
+ Category of the page
+ </summary>
+	<remarks></remarks>
+</member><member name="F:WikidotSiteBackupTool.WikidotPage.SiteProtocol">
+	<summary>
+ Protocol
+ </summary>
+	<remarks></remarks>
+</member><member name="T:WikidotSiteBackupTool.WikidotPage">
+	<summary>
+ Information about a Wikidot page
+ </summary>
+	<remarks></remarks>
 </member><member name="F:WikidotSiteBackupTool.EventOrOperationWaiter.WaitingStatusIndicator">
 	<summary>
  Marks if waiting condition has been satisfied.
@@ -121,51 +166,6 @@ MainWindow
 	<summary>
   用於查詢當地語系化字串等的強類型資源類別。
 </summary>
-</member><member name="T:WikidotSiteBackupTool.WikidotSiteHttpProtocol">
-	<summary>
- Protocol type of a URL
- </summary>
-	<remarks></remarks>
-</member><member name="F:WikidotSiteBackupTool.WikidotPage.PageUrl">
-	<summary>
- Full URL of the page, looks like "http(s)://site.name/(category:)page-name(/../...)".
- </summary>
-	<remarks></remarks>
-</member><member name="F:WikidotSiteBackupTool.WikidotPage.IsPageUrlValid">
-	<summary>
- Marks if the URL is valid.
- </summary>
-	<remarks></remarks>
-</member><member name="F:WikidotSiteBackupTool.WikidotPage.PageSite">
-	<summary>
- Belonging site of this page.
- </summary>
-	<remarks></remarks>
-</member><member name="F:WikidotSiteBackupTool.WikidotPage.PageFullName">
-	<summary>
- Full name of this page, looks like "(category:)page-name".
- </summary>
-	<remarks></remarks>
-</member><member name="F:WikidotSiteBackupTool.WikidotPage.PageUnixName">
-	<summary>
- Unix name of the page.
- </summary>
-	<remarks></remarks>
-</member><member name="F:WikidotSiteBackupTool.WikidotPage.PageCategory">
-	<summary>
- Category of the page
- </summary>
-	<remarks></remarks>
-</member><member name="F:WikidotSiteBackupTool.WikidotPage.SiteProtocol">
-	<summary>
- Protocol
- </summary>
-	<remarks></remarks>
-</member><member name="T:WikidotSiteBackupTool.WikidotPage">
-	<summary>
- Information about a Wikidot page
- </summary>
-	<remarks></remarks>
 </member>
 </members>
 </doc>

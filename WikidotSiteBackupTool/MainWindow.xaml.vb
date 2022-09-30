@@ -5,6 +5,7 @@ Imports System.Net
 Class MainWindow
     Dim EmptyList As New List(Of String)
     Dim LogList As New List(Of String)
+    Dim FailureList As New List(Of String)
     Dim SavePath As String
     Dim SiteUrl As String
     Dim PageListPageName As String
@@ -115,6 +116,7 @@ Class MainWindow
 
     Private Sub btnStartBackup_Click(sender As Object, e As RoutedEventArgs) Handles btnStartBackup.Click
         'Lock UI
+        FailureList.Clear()
         ClearLog()
         LockUi()
 
@@ -266,6 +268,7 @@ Class MainWindow
             Next
             If RetryCounter <> 0 Then
                 WriteLog("Failed to load page '" & PageList(i).PageFullName & "' after 5 tries, page skipped.")
+                FailureList.Add(PageList(i).PageUrl)
                 FailedCount += 1
                 Continue For
             End If
@@ -330,11 +333,13 @@ Class MainWindow
                 Next
                 If RetryCounter <> 0 Then
                     WriteLog("Failed to save page source of page '" & PageList(i).PageFullName & "' after 5 tries, page skipped.")
+                    FailureList.Add(PageList(i).PageUrl)
                     FailedCount += 1
                     Continue For
                 End If
             Catch ex As Exception
                 WriteLog("Failed to save page source of page '" & PageList(i).PageFullName & "', page skipped.")
+                FailureList.Add(PageList(i).PageUrl)
                 FailedCount += 1
                 Continue For
             End Try
@@ -394,6 +399,7 @@ Class MainWindow
                 Next
             Catch ex As Exception
                 WriteLog("Failed to check and save attached file(s) of page '" & PageList(i).PageFullName & "', skipped.")
+                FailureList.Add(PageList(i).PageUrl)
                 FailedCount += 1
                 Continue For
             End Try
@@ -403,8 +409,18 @@ Class MainWindow
         Next
 
         'Finalize
-        MessageBox.Show("Operation finished." & vbCrLf & SucceededCount.ToString() & " pages processed successfully, " & FailedCount.ToString() & " pages was not backed up due to error(s).")
-        WriteLog("Operation finished. " & SucceededCount.ToString() & " pages processed successfully, " & FailedCount.ToString() & " pages was not fully backed up due to error(s).")
+        Dim sFinishMsg As String = "Operation finished." & vbCrLf & SucceededCount.ToString() & " pages processed successfully, " & FailedCount.ToString() & " pages was not backed up due to error(s)."
+        If FailedCount > 0 Then
+            sFinishMsg += vbCrLf & vbCrLf & "Failed page(s):" & vbCrLf
+            For i As Integer = 0 To FailureList.Count - 1
+                sFinishMsg += FailureList(i) & vbCrLf
+            Next
+            sFinishMsg += "You may need to back up these page(s) manually."
+            MsgBox(sFinishMsg, MsgBoxStyle.Exclamation, "Operation Finished with Failure(s)")
+        Else
+            MsgBox(sFinishMsg, MsgBoxStyle.Information, "Operation Finished")
+        End If
+        WriteLog(sFinishMsg)
 
         'Unlock UI
         UnlockUi()
