@@ -42,4 +42,7 @@
         <ListBox x:Name="lstLog" Grid.Row="2" Margin="0,10,0,0"/>
         <ProgressBar x:Name="prgProgress" Grid.Row="3" Minimum="0" Maximum="100" Height="10" Margin="0,10,0,0"/>
     </Grid>
+    <Window.TaskbarItemInfo>
+        <TaskbarItemInfo x:Name="TaskbarItem" />
+    </Window.TaskbarItemInfo>
 </Window>

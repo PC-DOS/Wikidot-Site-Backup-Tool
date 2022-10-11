@@ -72,6 +72,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="EventOrOperationWaiter.vb" />
+    <Compile Include="SettingsProvider.vb" />
     <Compile Include="ThreadDoEvents.vb" />
     <Compile Include="WikidotPage.vb" />
     <Page Include="MainWindow.xaml">

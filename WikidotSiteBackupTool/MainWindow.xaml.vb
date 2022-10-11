@@ -47,11 +47,32 @@ Class MainWindow
         btnStartBackup.IsEnabled = True
         btnLogin.IsEnabled = True
     End Sub
+    Private Sub SaveSettings()
+        SaveSetting(ApplicationName, SettingsSectionName, LastDownloadPathKey, txtSavePath.Text)
+        SaveSetting(ApplicationName, SettingsSectionName, SiteURLKey, SiteUrl)
+        SaveSetting(ApplicationName, SettingsSectionName, ListPageNameKey, PageListPageName)
+    End Sub
+    Public Sub LoadSettings()
+        SavePath = GetSetting(ApplicationName, SettingsSectionName, LastDownloadPathKey, LastDownloadPathDefVal)
+        SiteUrl = GetSetting(ApplicationName, SettingsSectionName, SiteURLKey, SiteURLDefVal)
+        txtSiteUrl.Text = SiteUrl
+        PageListPageName = GetSetting(ApplicationName, SettingsSectionName, ListPageNameKey, ListPageNameDefVal)
+        txtListPageName.Text = PageListPageName
+        txtSavePath.Text = SavePath
+    End Sub
+    Private Sub SetTaskbarProgess(MaxValue As Integer, MinValue As Integer, CurrentValue As Integer, Optional State As Shell.TaskbarItemProgressState = Shell.TaskbarItemProgressState.Normal)
+        If MaxValue <= MinValue Or CurrentValue < MinValue Or CurrentValue > MaxValue Then
+            Exit Sub
+        End If
+        TaskbarItem.ProgressValue = (CurrentValue - MinValue) / (MaxValue - MinValue)
+        TaskbarItem.ProgressState = State
+    End Sub
 
     Private Sub btnBrowseSavePath_Click(sender As Object, e As RoutedEventArgs) Handles btnBrowseSavePath.Click
         Dim FolderBrowser As New System.Windows.Forms.FolderBrowserDialog
         With FolderBrowser
             .Description = "Please select the path to save the site backup."
+            .ShowNewFolderButton = True
         End With
         If FolderBrowser.ShowDialog() = Forms.DialogResult.OK Then
             SavePath = FolderBrowser.SelectedPath
@@ -94,12 +115,18 @@ Class MainWindow
         End
     End Sub
 
+    Private Sub MainWindow_Closing(sender As Object, e As ComponentModel.CancelEventArgs) Handles Me.Closing
+        SaveSettings()
+    End Sub
+
     Private Sub MainWindow_Loaded(sender As Object, e As RoutedEventArgs) Handles Me.Loaded
         Dim ActiveX = wbbWikidotSiteContainer.GetType().InvokeMember("ActiveXInstance", Reflection.BindingFlags.GetProperty Or Reflection.BindingFlags.Instance Or Reflection.BindingFlags.NonPublic, Nothing, wbbWikidotSiteContainer, Nothing)
         ActiveX.Silent = True
+        LoadSettings()
         SiteUrl = txtSiteUrl.Text.Trim()
         PageListPageName = txtListPageName.Text.Trim()
         PageListPageUrl = SiteUrl & "/" & PageListPageName.Trim()
+        SetTaskbarProgess(100, 0, 0, Shell.TaskbarItemProgressState.None)
     End Sub
 
     Private Sub btnLogin_Click(sender As Object, e As RoutedEventArgs) Handles btnLogin.Click
@@ -119,6 +146,7 @@ Class MainWindow
         FailureList.Clear()
         ClearLog()
         LockUi()
+        SaveSettings()
 
         'Save variables
         SavePath = txtSavePath.Text.Trim()
@@ -128,8 +156,17 @@ Class MainWindow
 
         'Create save directory
         If Not Directory.Exists(SavePath) Then
-            Directory.CreateDirectory(SavePath)
-            WriteLog("Created output dir: " + SavePath)
+            Try
+                Directory.CreateDirectory(SavePath)
+                WriteLog("Created output dir: " & SavePath)
+            Catch ex As Exception
+                MessageBox.Show("Unable to create output dir '" & SavePath & "'. Exception occurred: " & ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error)
+                WriteLog("Unable to create output dir '" & SavePath & "'. Exception occurred: " & ex.Message)
+                UnlockUi()
+                prgProgress.Value = 0
+                SetTaskbarProgess(100, 0, 0, Shell.TaskbarItemProgressState.None)
+                Exit Sub
+            End Try
         End If
 
         'Load page list
@@ -235,6 +272,7 @@ Class MainWindow
             MessageBox.Show("No pages to backup, exitting...", "No page", MessageBoxButton.OK, MessageBoxImage.Information)
             WriteLog("No pages to backup, exitting...")
             UnlockUi()
+            SetTaskbarProgess(100, 0, 0, Shell.TaskbarItemProgressState.None)
             Exit Sub
         End If
         prgProgress.Maximum = PageList.Count
@@ -270,6 +308,8 @@ Class MainWindow
                 WriteLog("Failed to load page '" & PageList(i).PageFullName & "' after 5 tries, page skipped.")
                 FailureList.Add(PageList(i).PageUrl)
                 FailedCount += 1
+                prgProgress.Value = prgProgress.Value + 1
+                SetTaskbarProgess(prgProgress.Maximum, 0, prgProgress.Value, Shell.TaskbarItemProgressState.Normal)
                 Continue For
             End If
             'Save page source
@@ -335,12 +375,16 @@ Class MainWindow
                     WriteLog("Failed to save page source of page '" & PageList(i).PageFullName & "' after 5 tries, page skipped.")
                     FailureList.Add(PageList(i).PageUrl)
                     FailedCount += 1
+                    prgProgress.Value = prgProgress.Value + 1
+                    SetTaskbarProgess(prgProgress.Maximum, 0, prgProgress.Value, Shell.TaskbarItemProgressState.Normal)
                     Continue For
                 End If
             Catch ex As Exception
                 WriteLog("Failed to save page source of page '" & PageList(i).PageFullName & "', page skipped.")
                 FailureList.Add(PageList(i).PageUrl)
                 FailedCount += 1
+                prgProgress.Value = prgProgress.Value + 1
+                SetTaskbarProgess(prgProgress.Maximum, 0, prgProgress.Value, Shell.TaskbarItemProgressState.Normal)
                 Continue For
             End Try
             'Save attached files
@@ -401,11 +445,14 @@ Class MainWindow
                 WriteLog("Failed to check and save attached file(s) of page '" & PageList(i).PageFullName & "', skipped.")
                 FailureList.Add(PageList(i).PageUrl)
                 FailedCount += 1
+                prgProgress.Value = prgProgress.Value + 1
+                SetTaskbarProgess(prgProgress.Maximum, 0, prgProgress.Value, Shell.TaskbarItemProgressState.Normal)
                 Continue For
             End Try
             'Count
             SucceededCount += 1
             prgProgress.Value = i + 1
+            SetTaskbarProgess(prgProgress.Maximum, 0, prgProgress.Value, Shell.TaskbarItemProgressState.Normal)
         Next
 
         'Finalize
@@ -425,5 +472,6 @@ Class MainWindow
         'Unlock UI
         UnlockUi()
         prgProgress.Value = 0
+        SetTaskbarProgess(100, 0, 0, Shell.TaskbarItemProgressState.None)
     End Sub
 End Class
