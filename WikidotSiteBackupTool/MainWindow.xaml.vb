@@ -52,7 +52,7 @@ Class MainWindow
         SaveSetting(ApplicationName, SettingsSectionName, SiteURLKey, SiteUrl)
         SaveSetting(ApplicationName, SettingsSectionName, ListPageNameKey, PageListPageName)
     End Sub
-    Public Sub LoadSettings()
+    Private Sub LoadSettings()
         SavePath = GetSetting(ApplicationName, SettingsSectionName, LastDownloadPathKey, LastDownloadPathDefVal)
         SiteUrl = GetSetting(ApplicationName, SettingsSectionName, SiteURLKey, SiteURLDefVal)
         txtSiteUrl.Text = SiteUrl
